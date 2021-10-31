@@ -65,7 +65,7 @@ class absenteeism_model():
     def load_and_clean_data(self,data_file):
         
         #import the data
-        df = pd.read_csv(data_file,delimiter-',')
+        df = pd.read_csv(data_file,delimiter=',')
        
         # store the data in a new variable for later use
         self.df_with_predictions = df.copy()
@@ -81,10 +81,10 @@ class absenteeism_model():
         
         
         #split reason_columns into 4 types
-        reason_type_1 = reason_colunms.loc[:,1:14].max(axis=1)
-        reason_type_2 = reason_colunms.loc[:,15:17].max(axis=1)
-        reason_type_3 = reason_colunms.loc[:,18:21].max(axis=1)
-        reason_type_4 = reason_colunms.loc[:,22:].max(axis=1)
+        reason_type_1 = reason_columns.loc[:,1:14].max(axis=1)
+        reason_type_2 = reason_columns.loc[:,15:17].max(axis=1)
+        reason_type_3 = reason_columns.loc[:,18:21].max(axis=1)
+        reason_type_4 = reason_columns.loc[:,22:].max(axis=1)
         
         #to avoil multicollinearity, drop the "Reason for Absense" column from df
         df =df.drop(['Reason for Absence'],axis =1)
@@ -105,18 +105,18 @@ class absenteeism_model():
        'Daily Work Load Average', 'Body Mass Index', 'Education','Children', 'Pets', 'Absenteeism Time in Hours']
         
         #conver the "Date" column into datetime
-        df['Date'] = pd.to_datetime(['Date'], format ="%d/%m/%Y")
+        df['Date'] = pd.to_datetime(df['Date'], format = '%d/%m/%Y')
         
         #creat a list with month values retrieved from the ' Date' column
-        list_months =[]
-        for i in range(df_reason_mod.shape[0]):
-          list_month.append(df_reason_mod['Date'][i].month)
+        list_months = []
+        for i in range(df.shape[0]):
+            list_months.append(df['Date'][i].month)
         
         #insert the values in a new column in df, called "Month Value"
         df['Month Value'] = list_months
         
         #create a new feature called "Day of the Week"
-        df['Day of the Week'] = df['Date'].appy(lambda x: x.weekday())
+        df['Day of the Week'] = df['Date'].apply(lambda x: x.weekday())
                                    
         #drop the "Date" column from df
         df = df.drop(['Date'], axis = 1)
@@ -145,37 +145,37 @@ class absenteeism_model():
          
 
 
-# In[4]:
+    # In[4]:
 
 
-# a function which outputs the probability of a data point to be 1
+    # a function which outputs the probability of a data point to be 1
 
-def predicted_probability(self):
-    if (self.data is not None):
-        pred = self.reg.predict(self.data)[:,1]
-        return pred
-    
-
-
-# In[5]:
+    def predicted_probability(self):
+        if (self.data is not None):
+            pred = self.reg.predict(self.data)[:,1]
+            return pred
 
 
-#a funtion which outputs 0 or 1 based on our model
 
-def predicted_output_catergory(self):
-    if(self.data is not None):
-        pred_outputs = self.reg.predict(self.data)
-        return pred_outputs
+    # In[5]:
 
 
-# In[6]:
+    #a funtion which outputs 0 or 1 based on our model
+
+    def predicted_output_catergory(self):
+        if(self.data is not None):
+            pred_outputs = self.reg.predict(self.data)
+            return pred_outputs
 
 
-#predic outputs and the probabilities and add columns with these values at the end of the new data
+    # In[6]:
 
-def predicted_outputs(self):
-    if (self.data is not None):
-        self.preprocessed_data['Probability'] = self.reg.predict_proba(self.data)[:,1]
-        self.preprocessed_date['Prediction']= self.reg.predict(self.data)
-        return self.preprocessed_data
+
+    #predic outputs and the probabilities and add columns with these values at the end of the new data
+
+    def predicted_outputs(self):
+        if (self.data is not None):
+            self.preprocessed_data['Probability'] = self.reg.predict_proba(self.data)[:,1]
+            self.preprocessed_data['Prediction']= self.reg.predict(self.data)
+            return self.preprocessed_data
 
